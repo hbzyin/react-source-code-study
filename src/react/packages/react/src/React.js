@@ -6,23 +6,11 @@
  */
 
 import ReactVersion from 'shared/ReactVersion';
-import {
-  REACT_CONCURRENT_MODE_TYPE,
-  REACT_FRAGMENT_TYPE,
-  REACT_PROFILER_TYPE,
-  REACT_STRICT_MODE_TYPE,
-  REACT_SUSPENSE_TYPE,
-} from 'shared/ReactSymbols';
-
+import { REACT_CONCURRENT_MODE_TYPE, REACT_FRAGMENT_TYPE, REACT_PROFILER_TYPE, REACT_STRICT_MODE_TYPE, REACT_SUSPENSE_TYPE } from 'shared/ReactSymbols';
 import {Component, PureComponent} from './ReactBaseClasses';
 import {createRef} from './ReactCreateRef';
 import {forEach, map, count, toArray, only} from './ReactChildren';
-import {
-  createElement,
-  createFactory,
-  cloneElement,
-  isValidElement,
-} from './ReactElement';
+import { createElement, createFactory, cloneElement, isValidElement } from './ReactElement';
 import {createContext} from './ReactContext';
 import {lazy} from './ReactLazy';
 import forwardRef from './forwardRef';
@@ -86,7 +74,6 @@ const React = {
   isValidElement: isValidElement,
 
   version: ReactVersion,
-
   unstable_ConcurrentMode: REACT_CONCURRENT_MODE_TYPE,
   unstable_Profiler: REACT_PROFILER_TYPE,
 

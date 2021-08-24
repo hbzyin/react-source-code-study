@@ -7,17 +7,8 @@
 
 import {getLowestCommonAncestor, isAncestor} from 'shared/ReactTreeTraversal';
 
-import {
-  executeDirectDispatch,
-  hasDispatches,
-  executeDispatchesInOrderStopAtTrue,
-  getInstanceFromNode,
-} from './EventPluginUtils';
-import {
-  accumulateDirectDispatches,
-  accumulateTwoPhaseDispatches,
-  accumulateTwoPhaseDispatchesSkipTarget,
-} from './EventPropagators';
+import {executeDirectDispatch, hasDispatches, executeDispatchesInOrderStopAtTrue, getInstanceFromNode} from './EventPluginUtils';
+import { accumulateDirectDispatches, accumulateTwoPhaseDispatches, accumulateTwoPhaseDispatchesSkipTarget } from './EventPropagators';
 import ResponderSyntheticEvent from './ResponderSyntheticEvent';
 import ResponderTouchHistoryStore from './ResponderTouchHistoryStore';
 import accumulate from './accumulate';
@@ -341,12 +332,7 @@ to return true:wantsResponderID|                            |
  * - `responderGrant/Reject`   (`EventPluginHub` dispatches as usual)
  */
 
-function setResponderAndExtractTransfer(
-  topLevelType,
-  targetInst,
-  nativeEvent,
-  nativeEventTarget,
-) {
+function setResponderAndExtractTransfer( topLevelType,targetInst,nativeEvent,nativeEventTarget,) {
   const shouldSetEventType = isStartish(topLevelType)
     ? eventTypes.startShouldSetResponder
     : isMoveish(topLevelType)
@@ -372,6 +358,7 @@ function setResponderAndExtractTransfer(
     nativeEventTarget,
   );
   shouldSetEvent.touchHistory = ResponderTouchHistoryStore.touchHistory;
+  console.info('events-ResponderEventPlugin- setResponderAndExtractTransfer', topLevelType,targetInst,nativeEvent,nativeEventTarget)
   if (skipOverBubbleShouldSetFrom) {
     accumulateTwoPhaseDispatchesSkipTarget(shouldSetEvent);
   } else {
@@ -502,12 +489,7 @@ const ResponderEventPlugin = {
    * `touchEnd`. On certain platforms, this means that a native scroll has
    * assumed control and the original touch targets are destroyed.
    */
-  extractEvents: function(
-    topLevelType,
-    targetInst,
-    nativeEvent,
-    nativeEventTarget,
-  ) {
+  extractEvents: function( topLevelType, targetInst, nativeEvent, nativeEventTarget) {
     if (isStartish(topLevelType)) {
       trackedTouchCount += 1;
     } else if (isEndish(topLevelType)) {
@@ -522,15 +504,10 @@ const ResponderEventPlugin = {
     }
 
     ResponderTouchHistoryStore.recordTouchTrack(topLevelType, nativeEvent);
-
+    console.info('events-ResponderEventPlugin:ResponderEventPlugin->  class -> extractEvents',  topLevelType, targetInst, nativeEvent, nativeEventTarget)
     let extracted = canTriggerTransfer(topLevelType, targetInst, nativeEvent)
-      ? setResponderAndExtractTransfer(
-          topLevelType,
-          targetInst,
-          nativeEvent,
-          nativeEventTarget,
-        )
-      : null;
+          ? setResponderAndExtractTransfer( topLevelType,targetInst,nativeEvent,nativeEventTarget)
+          : null;
     // Responder may or may not have transferred on a new touch start/move.
     // Regardless, whoever is the responder after any potential transfer, we
     // direct all touch start/move/ends to them in the form of

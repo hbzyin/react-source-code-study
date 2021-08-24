@@ -8,19 +8,10 @@
 
 import {rethrowCaughtError} from 'shared/ReactErrorUtils';
 import invariant from 'shared/invariant';
-
-import {
-  injectEventPluginOrder,
-  injectEventPluginsByName,
-  plugins,
-} from './EventPluginRegistry';
-import {
-  executeDispatchesInOrder,
-  getFiberCurrentPropsFromNode,
-} from './EventPluginUtils';
+import { injectEventPluginOrder, injectEventPluginsByName, plugins } from './EventPluginRegistry';
+import { executeDispatchesInOrder, getFiberCurrentPropsFromNode } from './EventPluginUtils';
 import accumulateInto from './accumulateInto';
 import forEachAccumulated from './forEachAccumulated';
-
 import type {PluginModule} from './PluginModuleType';
 import type {ReactSyntheticEvent} from './ReactSyntheticEventType';
 import type {Fiber} from 'react-reconciler/src/ReactFiber';
@@ -32,7 +23,6 @@ import type {TopLevelType} from './TopLevelEventTypes';
  * waiting to have their dispatches executed.
  */
 let eventQueue: ?(Array<ReactSyntheticEvent> | ReactSyntheticEvent) = null;
-
 /**
  * Dispatches an event and releases it back into the pool, unless persistent.
  *
@@ -42,10 +32,7 @@ let eventQueue: ?(Array<ReactSyntheticEvent> | ReactSyntheticEvent) = null;
 const executeDispatchesAndRelease = function(event: ReactSyntheticEvent) {
   if (event) {
     executeDispatchesInOrder(event);
-
-    if (!event.isPersistent()) {
-      event.constructor.release(event);
-    }
+    if (!event.isPersistent()) event.constructor.release(event);
   }
 };
 const executeDispatchesAndReleaseTopLevel = function(e) {
@@ -53,15 +40,12 @@ const executeDispatchesAndReleaseTopLevel = function(e) {
 };
 
 function isInteractive(tag) {
-  return (
-    tag === 'button' ||
-    tag === 'input' ||
-    tag === 'select' ||
-    tag === 'textarea'
-  );
+  return ( tag === 'button' || tag === 'input' || tag === 'select' || tag === 'textarea');
 }
 
 function shouldPreventMouseEvent(name, type, props) {
+  debugger
+  console.info('events-EventPluginHub', name, type, props)
   switch (name) {
     case 'onClick':
     case 'onClickCapture':
@@ -111,7 +95,6 @@ export const injection = {
    * @public
    */
   injectEventPluginOrder,
-
   /**
    * @param {object} injectedNamesToPlugins Map from names to plugin modules.
    */
@@ -124,24 +107,15 @@ export const injection = {
  * @return {?function} The stored callback.
  */
 export function getListener(inst: Fiber, registrationName: string) {
+  console.info('events-EventPluginHub: getListener ', inst, registrationName)
   let listener;
-
-  // TODO: shouldPreventMouseEvent is DOM-specific and definitely should not
-  // live here; needs to be moved to a better place soon
+  // TODO: shouldPreventMouseEvent is DOM-specific and definitely should not live here; needs to be moved to a better place soon
   const stateNode = inst.stateNode;
-  if (!stateNode) {
-    // Work in progress (ex: onload events in incremental mode).
-    return null;
-  }
+  if (!stateNode) return null; // Work in progress (ex: onload events in incremental mode).
   const props = getFiberCurrentPropsFromNode(stateNode);
-  if (!props) {
-    // Work in progress.
-    return null;
-  }
+  if (!props) return null;  // Work in progress.
   listener = props[registrationName];
-  if (shouldPreventMouseEvent(registrationName, inst.type, props)) {
-    return null;
-  }
+  if (shouldPreventMouseEvent(registrationName, inst.type, props)) return null;
   invariant(
     !listener || typeof listener === 'function',
     'Expected `%s` listener to be a function, instead got a value of `%s` type.',
@@ -158,12 +132,7 @@ export function getListener(inst: Fiber, registrationName: string) {
  * @return {*} An accumulation of synthetic events.
  * @internal
  */
-function extractEvents(
-  topLevelType: TopLevelType,
-  targetInst: null | Fiber,
-  nativeEvent: AnyNativeEvent,
-  nativeEventTarget: EventTarget,
-): Array<ReactSyntheticEvent> | ReactSyntheticEvent | null {
+function extractEvents( topLevelType: TopLevelType, targetInst: null | Fiber, nativeEvent: AnyNativeEvent,nativeEventTarget: EventTarget): Array<ReactSyntheticEvent> | ReactSyntheticEvent | null {
   let events = null;
   for (let i = 0; i < plugins.length; i++) {
     // Not every plugin in the ordering may be loaded at runtime.
@@ -182,29 +151,14 @@ function extractEvents(
   }
   return events;
 }
-
-export function runEventsInBatch(
-  events: Array<ReactSyntheticEvent> | ReactSyntheticEvent | null,
-) {
-  if (events !== null) {
-    eventQueue = accumulateInto(eventQueue, events);
-  }
-
-  // Set `eventQueue` to null before processing it so that we can tell if more
-  // events get enqueued while processing.
+export function runEventsInBatch( events: Array<ReactSyntheticEvent> | ReactSyntheticEvent | null ) {
+  if (events !== null)  eventQueue = accumulateInto(eventQueue, events);
+  // Set `eventQueue` to null before processing it so that we can tell if more events get enqueued while processing.
   const processingEventQueue = eventQueue;
   eventQueue = null;
-
-  if (!processingEventQueue) {
-    return;
-  }
-
+  if (!processingEventQueue) return;
   forEachAccumulated(processingEventQueue, executeDispatchesAndReleaseTopLevel);
-  invariant(
-    !eventQueue,
-    'processEventQueue(): Additional events were enqueued while processing ' +
-      'an event queue. Support for this has not yet been implemented.',
-  );
+  invariant(!eventQueue,'processEventQueue(): Additional events were enqueued while processing an event queue. Support for this has not yet been implemented.');
   // This would be a good time to rethrow if any of the event handlers threw.
   rethrowCaughtError();
 }

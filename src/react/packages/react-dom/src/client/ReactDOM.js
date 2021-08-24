@@ -69,7 +69,7 @@ import {
   getClosestInstanceFromNode,
 } from './ReactDOMComponentTree';
 import {restoreControlledState} from './ReactDOMComponent';
-import {dispatchEvent} from '../events/ReactDOMEventListener';
+import {dispatchEvent} from '../events/ReactDOMEventListener'; // 所有原生事件的 listener 都是dispatchEvent函数。
 import {
   ELEMENT_NODE,
   COMMENT_NODE,

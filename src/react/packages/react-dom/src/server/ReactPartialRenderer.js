@@ -10,7 +10,6 @@
 import type {ThreadID} from './ReactThreadIDAllocator';
 import type {ReactElement} from 'shared/ReactElementType';
 import type {ReactProvider, ReactContext} from 'shared/ReactTypes';
-
 import React from 'react';
 import invariant from 'shared/invariant';
 import getComponentName from 'shared/getComponentName';
@@ -19,10 +18,7 @@ import warning from 'shared/warning';
 import warningWithoutStack from 'shared/warningWithoutStack';
 import describeComponentFrame from 'shared/describeComponentFrame';
 import ReactSharedInternals from 'shared/ReactSharedInternals';
-import {
-  warnAboutDeprecatedLifecycles,
-  enableSuspenseServerRenderer,
-} from 'shared/ReactFeatureFlags';
+import { warnAboutDeprecatedLifecycles, enableSuspenseServerRenderer } from 'shared/ReactFeatureFlags';
 
 import {
   REACT_FORWARD_REF_TYPE,

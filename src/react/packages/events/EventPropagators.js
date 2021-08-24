@@ -15,7 +15,6 @@ import warningWithoutStack from 'shared/warningWithoutStack';
 import {getListener} from './EventPluginHub';
 import accumulateInto from './accumulateInto';
 import forEachAccumulated from './forEachAccumulated';
-
 type PropagationPhases = 'bubbled' | 'captured';
 
 /**
@@ -23,8 +22,7 @@ type PropagationPhases = 'bubbled' | 'captured';
  * "phases" of propagation. This finds listeners by a given phase.
  */
 function listenerAtPhase(inst, event, propagationPhase: PropagationPhases) {
-  const registrationName =
-    event.dispatchConfig.phasedRegistrationNames[propagationPhase];
+  const registrationName = event.dispatchConfig.phasedRegistrationNames[propagationPhase];
   return getListener(inst, registrationName);
 }
 
@@ -45,15 +43,11 @@ function listenerAtPhase(inst, event, propagationPhase: PropagationPhases) {
  * "dispatch" object that pairs the event with the listener.
  */
 function accumulateDirectionalDispatches(inst, phase, event) {
-  if (__DEV__) {
-    warningWithoutStack(inst, 'Dispatching inst must not be null');
-  }
+  if (__DEV__)  warningWithoutStack(inst, 'Dispatching inst must not be null');
+   console.info(26, inst, event, phase) // 在事件不同阶段获取事件（bubbled、captured）
   const listener = listenerAtPhase(inst, event, phase);
   if (listener) {
-    event._dispatchListeners = accumulateInto(
-      event._dispatchListeners,
-      listener,
-    );
+    event._dispatchListeners = accumulateInto( event._dispatchListeners,listener);
     event._dispatchInstances = accumulateInto(event._dispatchInstances, inst);
   }
 }
@@ -66,6 +60,7 @@ function accumulateDirectionalDispatches(inst, phase, event) {
  * have a different target.
  */
 function accumulateTwoPhaseDispatchesSingle(event) {
+  console.info('events-EventPropagators: accumulateTwoPhaseDispatchesSingle', event)
   if (event && event.dispatchConfig.phasedRegistrationNames) {
     traverseTwoPhase(event._targetInst, accumulateDirectionalDispatches, event);
   }
@@ -75,6 +70,7 @@ function accumulateTwoPhaseDispatchesSingle(event) {
  * Same as `accumulateTwoPhaseDispatchesSingle`, but skips over the targetID.
  */
 function accumulateTwoPhaseDispatchesSingleSkipTarget(event) {
+   console.info('events-EventPropagators: accumulateTwoPhaseDispatchesSingleSkipTarget',event )
   if (event && event.dispatchConfig.phasedRegistrationNames) {
     const targetInst = event._targetInst;
     const parentInst = targetInst ? getParentInstance(targetInst) : null;
@@ -92,10 +88,7 @@ function accumulateDispatches(inst, ignoredDirection, event) {
     const registrationName = event.dispatchConfig.registrationName;
     const listener = getListener(inst, registrationName);
     if (listener) {
-      event._dispatchListeners = accumulateInto(
-        event._dispatchListeners,
-        listener,
-      );
+      event._dispatchListeners = accumulateInto( event._dispatchListeners,listener);
       event._dispatchInstances = accumulateInto(event._dispatchInstances, inst);
     }
   }

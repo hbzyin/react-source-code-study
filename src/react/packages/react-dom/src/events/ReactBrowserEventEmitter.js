@@ -91,7 +91,6 @@ let reactTopListenersCounter = 0;
  * To ensure no conflicts with other potential React instances on the page
  */
 const topListenersIDKey = '_reactListenersID' + ('' + Math.random()).slice(2);
-
 function getListeningForDocument(mountAt: any) {
   // In IE8, `mountAt` is a host object and doesn't have `hasOwnProperty`
   // directly.
@@ -123,13 +122,9 @@ function getListeningForDocument(mountAt: any) {
  * @param {string} registrationName Name of listener (e.g. `onClick`).
  * @param {object} mountAt Container where to mount the listener
  */
-export function listenTo(
-  registrationName: string,
-  mountAt: Document | Element,
-) {
+export function listenTo( registrationName: string, mountAt: Document | Element ) {
   const isListening = getListeningForDocument(mountAt);
   const dependencies = registrationNameDependencies[registrationName];
-
   for (let i = 0; i < dependencies.length; i++) {
     const dependency = dependencies[i];
     if (!(isListening.hasOwnProperty(dependency) && isListening[dependency])) {
@@ -141,30 +136,23 @@ export function listenTo(
         case TOP_BLUR:
           trapCapturedEvent(TOP_FOCUS, mountAt);
           trapCapturedEvent(TOP_BLUR, mountAt);
-          // We set the flag for a single dependency later in this function,
-          // but this ensures we mark both as attached rather than just one.
+          // We set the flag for a single dependency later in this function, but this ensures we mark both as attached rather than just one.
           isListening[TOP_BLUR] = true;
           isListening[TOP_FOCUS] = true;
           break;
         case TOP_CANCEL:
         case TOP_CLOSE:
-          if (isEventSupported(getRawEventName(dependency))) {
-            trapCapturedEvent(dependency, mountAt);
-          }
+          if (isEventSupported(getRawEventName(dependency))) trapCapturedEvent(dependency, mountAt);
           break;
         case TOP_INVALID:
         case TOP_SUBMIT:
         case TOP_RESET:
-          // We listen to them on the target DOM elements.
-          // Some of them bubble so we don't want them to fire twice.
+          // We listen to them on the target DOM elements.Some of them bubble so we don't want them to fire twice.
           break;
         default:
-          // By default, listen on the top level to all non-media events.
-          // Media events don't bubble so adding the listener wouldn't do anything.
+          // By default, listen on the top level to all non-media events. Media events don't bubble so adding the listener wouldn't do anything.
           const isMediaEvent = mediaEventTypes.indexOf(dependency) !== -1;
-          if (!isMediaEvent) {
-            trapBubbledEvent(dependency, mountAt);
-          }
+          if (!isMediaEvent) trapBubbledEvent(dependency, mountAt);
           break;
       }
       isListening[dependency] = true;
@@ -172,10 +160,7 @@ export function listenTo(
   }
 }
 
-export function isListeningToAllDependencies(
-  registrationName: string,
-  mountAt: Document | Element,
-) {
+export function isListeningToAllDependencies( registrationName: string, mountAt: Document | Element ) {
   const isListening = getListeningForDocument(mountAt);
   const dependencies = registrationNameDependencies[registrationName];
   for (let i = 0; i < dependencies.length; i++) {

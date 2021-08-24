@@ -10,9 +10,7 @@
 import type {ReactContext} from 'shared/ReactTypes';
 import invariant from 'shared/invariant';
 import warning from 'shared/warning';
-
 import ReactCurrentDispatcher from './ReactCurrentDispatcher';
-
 function resolveDispatcher() {
   const dispatcher = ReactCurrentDispatcher.current;
   invariant(
@@ -27,10 +25,7 @@ function resolveDispatcher() {
   return dispatcher;
 }
 
-export function useContext<T>(
-  Context: ReactContext<T>,
-  unstable_observedBits: number | boolean | void,
-) {
+export function useContext<T>( Context: ReactContext<T>, unstable_observedBits: number | boolean | void) {
   const dispatcher = resolveDispatcher();
   if (__DEV__) {
     warning(
@@ -88,34 +83,22 @@ export function useRef<T>(initialValue: T): {current: T} {
   return dispatcher.useRef(initialValue);
 }
 
-export function useEffect(
-  create: () => (() => void) | void,
-  inputs: Array<mixed> | void | null,
-) {
+export function useEffect( create: () => (() => void) | void,inputs: Array<mixed> | void | null,) {
   const dispatcher = resolveDispatcher();
   return dispatcher.useEffect(create, inputs);
 }
 
-export function useLayoutEffect(
-  create: () => (() => void) | void,
-  inputs: Array<mixed> | void | null,
-) {
+export function useLayoutEffect( create: () => (() => void) | void,inputs: Array<mixed> | void | null,) {
   const dispatcher = resolveDispatcher();
   return dispatcher.useLayoutEffect(create, inputs);
 }
 
-export function useCallback(
-  callback: () => mixed,
-  inputs: Array<mixed> | void | null,
-) {
+export function useCallback( callback: () => mixed,inputs: Array<mixed> | void | null,) {
   const dispatcher = resolveDispatcher();
   return dispatcher.useCallback(callback, inputs);
 }
 
-export function useMemo(
-  create: () => mixed,
-  inputs: Array<mixed> | void | null,
-) {
+export function useMemo( create: () => mixed,inputs: Array<mixed> | void | null) {
   const dispatcher = resolveDispatcher();
   return dispatcher.useMemo(create, inputs);
 }

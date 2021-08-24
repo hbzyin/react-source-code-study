@@ -8,7 +8,6 @@
  */
 
 import invariant from 'shared/invariant';
-
 /**
  * Accumulates items that must not be null or undefined into the first one. This
  * is used to conserve memory by avoiding array allocations, and thus sacrifices
@@ -21,22 +20,10 @@ import invariant from 'shared/invariant';
  *
  * @return {*|array<*>} An accumulation of items.
  */
-
-function accumulateInto<T>(
-  current: ?(Array<T> | T),
-  next: T | Array<T>,
-): T | Array<T> {
-  invariant(
-    next != null,
-    'accumulateInto(...): Accumulated items must not be null or undefined.',
-  );
-
-  if (current == null) {
-    return next;
-  }
-
-  // Both are not empty. Warning: Never call x.concat(y) when you are not
-  // certain that x is an Array (x could be a string with concat method).
+function accumulateInto<T>( current: ?(Array<T> | T), next: T | Array<T>): T | Array<T> {
+  invariant( next != null,'accumulateInto(...): Accumulated items must not be null or undefined.');
+  if (current == null) return next;
+  // Both are not empty. Warning: Never call x.concat(y) when you are not certain that x is an Array (x could be a string with concat method).
   if (Array.isArray(current)) {
     if (Array.isArray(next)) {
       current.push.apply(current, next);
@@ -45,12 +32,7 @@ function accumulateInto<T>(
     current.push(next);
     return current;
   }
-
-  if (Array.isArray(next)) {
-    // A bit too dangerous to mutate `next`.
-    return [current].concat(next);
-  }
-
+  if (Array.isArray(next))return [current].concat(next); // A bit too dangerous to mutate `next`.
   return [current, next];
 }
 

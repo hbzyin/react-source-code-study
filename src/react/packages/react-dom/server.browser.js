@@ -8,9 +8,7 @@
  */
 
 'use strict';
-
 const ReactDOMServer = require('./src/server/ReactDOMServerBrowser');
-
 // TODO: decide on the top-level export form.
 // This is hacky but makes it work with both Rollup and Jest
 module.exports = ReactDOMServer.default || ReactDOMServer;

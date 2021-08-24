@@ -9,7 +9,6 @@
 
 import invariant from 'shared/invariant';
 import warningWithoutStack from 'shared/warningWithoutStack';
-
 const EVENT_POOL_SIZE = 10;
 
 /**
@@ -59,12 +58,7 @@ function functionThatReturnsFalse() {
  * @param {object} nativeEvent Native browser event.
  * @param {DOMEventTarget} nativeEventTarget Target node.
  */
-function SyntheticEvent(
-  dispatchConfig,
-  targetInst,
-  nativeEvent,
-  nativeEventTarget,
-) {
+function SyntheticEvent( dispatchConfig, targetInst, nativeEvent, nativeEventTarget ) {
   if (__DEV__) {
     // these have a getter/setter for warnings
     delete this.nativeEvent;
@@ -77,15 +71,10 @@ function SyntheticEvent(
   this.dispatchConfig = dispatchConfig;
   this._targetInst = targetInst;
   this.nativeEvent = nativeEvent;
-
   const Interface = this.constructor.Interface;
   for (const propName in Interface) {
-    if (!Interface.hasOwnProperty(propName)) {
-      continue;
-    }
-    if (__DEV__) {
-      delete this[propName]; // this has a getter/setter for warnings
-    }
+    if (!Interface.hasOwnProperty(propName)) continue;
+    if (__DEV__)  delete this[propName]; // this has a getter/setter for warnings
     const normalize = Interface[propName];
     if (normalize) {
       this[propName] = normalize(nativeEvent);
@@ -115,10 +104,7 @@ Object.assign(SyntheticEvent.prototype, {
   preventDefault: function() {
     this.defaultPrevented = true;
     const event = this.nativeEvent;
-    if (!event) {
-      return;
-    }
-
+    if (!event)  return;
     if (event.preventDefault) {
       event.preventDefault();
     } else if (typeof event.returnValue !== 'unknown') {
@@ -126,13 +112,9 @@ Object.assign(SyntheticEvent.prototype, {
     }
     this.isDefaultPrevented = functionThatReturnsTrue;
   },
-
   stopPropagation: function() {
     const event = this.nativeEvent;
-    if (!event) {
-      return;
-    }
-
+    if (!event) return;
     if (event.stopPropagation) {
       event.stopPropagation();
     } else if (typeof event.cancelBubble !== 'unknown') {
@@ -143,10 +125,8 @@ Object.assign(SyntheticEvent.prototype, {
       // IE specific).
       event.cancelBubble = true;
     }
-
     this.isPropagationStopped = functionThatReturnsTrue;
   },
-
   /**
    * We release all dispatched `SyntheticEvent`s after each event loop, adding
    * them back into the pool. This allows a way to hold onto a reference that
@@ -162,7 +142,6 @@ Object.assign(SyntheticEvent.prototype, {
    * @return {boolean} True if this should not be released, false otherwise.
    */
   isPersistent: functionThatReturnsFalse,
-
   /**
    * `PooledClass` looks for `destructor` on each instance it releases.
    */
@@ -223,33 +202,24 @@ Object.assign(SyntheticEvent.prototype, {
 });
 
 SyntheticEvent.Interface = EventInterface;
-
-/**
- * Helper to reduce boilerplate when creating subclasses.
- */
+// Helper to reduce boilerplate when creating subclasses.
 SyntheticEvent.extend = function(Interface) {
   const Super = this;
-
   const E = function() {};
   E.prototype = Super.prototype;
   const prototype = new E();
-
   function Class() {
     return Super.apply(this, arguments);
   }
   Object.assign(prototype, Class.prototype);
   Class.prototype = prototype;
   Class.prototype.constructor = Class;
-
   Class.Interface = Object.assign({}, Super.Interface, Interface);
   Class.extend = Super.extend;
   addEventPoolingTo(Class);
-
   return Class;
 };
-
 addEventPoolingTo(SyntheticEvent);
-
 /**
  * Helper to nullify syntheticEvent instance properties when destructing
  *
@@ -272,12 +242,8 @@ function getPooledWarningPropertyDefinition(propName, getVal) {
   }
 
   function get() {
-    const action = isFunction
-      ? 'accessing the method'
-      : 'accessing the property';
-    const result = isFunction
-      ? 'This is a no-op function'
-      : 'This is set to null';
+    const action = isFunction ? 'accessing the method' : 'accessing the property';
+    const result = isFunction ? 'This is a no-op function' : 'This is set to null';
     warn(action, result);
     return getVal;
   }

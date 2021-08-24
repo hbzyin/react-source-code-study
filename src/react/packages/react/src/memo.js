@@ -6,23 +6,11 @@
  */
 
 import {REACT_MEMO_TYPE} from 'shared/ReactSymbols';
-
 import isValidElementType from 'shared/isValidElementType';
 import warningWithoutStack from 'shared/warningWithoutStack';
-
-export default function memo<Props>(
-  type: React$ElementType,
-  compare?: (oldProps: Props, newProps: Props) => boolean,
-) {
+export default function memo<Props>( type: React$ElementType,compare?: (oldProps: Props, newProps: Props) => boolean) {
   if (__DEV__) {
-    if (!isValidElementType(type)) {
-      warningWithoutStack(
-        false,
-        'memo: The first argument must be a component. Instead ' +
-          'received: %s',
-        type === null ? 'null' : typeof type,
-      );
-    }
+    if (!isValidElementType(type)) warningWithoutStack(false,'memo: The first argument must be a component. Instead received: %s', type === null ? 'null' : typeof type );
   }
   return {
     $$typeof: REACT_MEMO_TYPE,

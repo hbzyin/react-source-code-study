@@ -8,17 +8,10 @@
  */
 
 import type {DispatchConfig} from './ReactSyntheticEventType';
-import type {
-  AnyNativeEvent,
-  PluginName,
-  PluginModule,
-} from './PluginModuleType';
-
+import type { AnyNativeEvent,PluginName, PluginModule } from './PluginModuleType';
 import invariant from 'shared/invariant';
-
 type NamesToPlugins = {[key: PluginName]: PluginModule<AnyNativeEvent>};
 type EventPluginOrder = null | Array<PluginName>;
-
 /**
  * Injectable ordering of event plugins.
  */
@@ -35,26 +28,19 @@ const namesToPlugins: NamesToPlugins = {};
  * @private
  */
 function recomputePluginOrdering(): void {
-  if (!eventPluginOrder) {
-    // Wait until an `eventPluginOrder` is injected.
-    return;
-  }
+  if (!eventPluginOrder) return;  // Wait until an `eventPluginOrder` is injected.
   for (const pluginName in namesToPlugins) {
     const pluginModule = namesToPlugins[pluginName];
     const pluginIndex = eventPluginOrder.indexOf(pluginName);
     invariant(
       pluginIndex > -1,
-      'EventPluginRegistry: Cannot inject event plugins that do not exist in ' +
-        'the plugin ordering, `%s`.',
+      'EventPluginRegistry: Cannot inject event plugins that do not exist in the plugin ordering, `%s`.',
       pluginName,
     );
-    if (plugins[pluginIndex]) {
-      continue;
-    }
+    if (plugins[pluginIndex]) continue;
     invariant(
       pluginModule.extractEvents,
-      'EventPluginRegistry: Event plugins must implement an `extractEvents` ' +
-        'method, but `%s` does not.',
+      'EventPluginRegistry: Event plugins must implement an `extractEvents` method, but `%s` does not.',
       pluginName,
     );
     plugins[pluginIndex] = pluginModule;
@@ -89,8 +75,7 @@ function publishEventForPlugin(
 ): boolean {
   invariant(
     !eventNameDispatchConfigs.hasOwnProperty(eventName),
-    'EventPluginHub: More than one plugin attempted to publish the same ' +
-      'event name, `%s`.',
+    'EventPluginHub: More than one plugin attempted to publish the same event name, `%s`.',
     eventName,
   );
   eventNameDispatchConfigs[eventName] = dispatchConfig;
@@ -133,18 +118,14 @@ function publishRegistrationName(
 ): void {
   invariant(
     !registrationNameModules[registrationName],
-    'EventPluginHub: More than one plugin attempted to publish the same ' +
-      'registration name, `%s`.',
+    'EventPluginHub: More than one plugin attempted to publish the same registration name, `%s`.',
     registrationName,
   );
   registrationNameModules[registrationName] = pluginModule;
-  registrationNameDependencies[registrationName] =
-    pluginModule.eventTypes[eventName].dependencies;
-
+  registrationNameDependencies[registrationName] = pluginModule.eventTypes[eventName].dependencies;
   if (__DEV__) {
     const lowerCasedName = registrationName.toLowerCase();
     possibleRegistrationNames[lowerCasedName] = registrationName;
-
     if (registrationName === 'onDoubleClick') {
       possibleRegistrationNames.ondblclick = registrationName;
     }

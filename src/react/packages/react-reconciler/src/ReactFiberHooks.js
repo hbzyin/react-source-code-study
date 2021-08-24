@@ -12,15 +12,10 @@ import type {SideEffectTag} from 'shared/ReactSideEffectTags';
 import type {Fiber} from './ReactFiber';
 import type {ExpirationTime} from './ReactFiberExpirationTime';
 import type {HookEffectTag} from './ReactHookEffectTags';
-
 import ReactSharedInternals from 'shared/ReactSharedInternals';
-
 import {NoWork} from './ReactFiberExpirationTime';
 import {readContext} from './ReactFiberNewContext';
-import {
-  Update as UpdateEffect,
-  Passive as PassiveEffect,
-} from 'shared/ReactSideEffectTags';
+import { Update as UpdateEffect,Passive as PassiveEffect } from 'shared/ReactSideEffectTags';
 import {
   NoEffect as NoHookEffect,
   UnmountMutation,
@@ -41,7 +36,6 @@ import warning from 'shared/warning';
 import getComponentName from 'shared/getComponentName';
 import is from 'shared/objectIs';
 import {markWorkInProgressReceivedUpdate} from './ReactFiberBeginWork';
-
 const {ReactCurrentDispatcher} = ReactSharedInternals;
 
 export type Dispatcher = {
@@ -106,17 +100,12 @@ export type HookType =
   | 'useDebugValue';
 
 let didWarnAboutMismatchedHooksForComponent;
-if (__DEV__) {
-  didWarnAboutMismatchedHooksForComponent = new Set();
-}
-
+if (__DEV__) didWarnAboutMismatchedHooksForComponent = new Set();
 export type Hook = {
   memoizedState: any,
-
   baseState: any,
   baseUpdate: Update<any, any> | null,
   queue: UpdateQueue<any, any> | null,
-
   next: Hook | null,
 };
 
@@ -131,11 +120,8 @@ type Effect = {
 export type FunctionComponentUpdateQueue = {
   lastEffect: Effect | null,
 };
-
 type BasicStateAction<S> = (S => S) | S;
-
 type Dispatch<A> = A => void;
-
 // These are set right before calling the component.
 let renderExpirationTime: ExpirationTime = NoWork;
 // The work-in-progress fiber. I've named it differently to distinguish it from
@@ -151,11 +137,9 @@ let nextCurrentHook: Hook | null = null;
 let firstWorkInProgressHook: Hook | null = null;
 let workInProgressHook: Hook | null = null;
 let nextWorkInProgressHook: Hook | null = null;
-
 let remainingExpirationTime: ExpirationTime = NoWork;
 let componentUpdateQueue: FunctionComponentUpdateQueue | null = null;
 let sideEffectTag: SideEffectTag = 0;
-
 // Updates scheduled during render will trigger an immediate re-render at the
 // end of the current pass. We can't store these updates on the normal queue,
 // because if the work is aborted, they should be discarded. Because this is
@@ -163,7 +147,6 @@ let sideEffectTag: SideEffectTag = 0;
 // either the hook or queue object types. So we store them in a lazily create
 // map of queue -> render-phase updates, which are discarded once the component
 // completes without re-rendering.
-
 // Whether an update was scheduled during the currently executing render pass.
 let didScheduleRenderPhaseUpdate: boolean = false;
 // Lazily created map of render-phase updates
